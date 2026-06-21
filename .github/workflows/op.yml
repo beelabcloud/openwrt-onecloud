@@ -246,6 +246,25 @@ jobs:
            扩容：sh 1.sh
            默认密码：无
 
+    - name: Archive OpenWrt Source Code
+      if: success()
+      run: |
+        echo "Creating a tarball of the openwrt build directory..."
+        # Exclude massive pre-compiled toolchains and temporary build directories to save space/time
+        tar -czf openwrt-source-code.tar.gz \
+          --exclude='openwrt/build_dir' \
+          --exclude='openwrt/staging_dir' \
+          --exclude='openwrt/toolchain' \
+          openwrt/
+
+    - name: Upload Source Code Tarball
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenWrt_Source_Code_Tarball
+        path: openwrt-source-code.tar.gz
+        retention-days: 7
+
     - name: 清理Releases
       uses: dev-drprasad/delete-older-releases@v0.3.4
       with:
